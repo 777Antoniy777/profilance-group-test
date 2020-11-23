@@ -1,0 +1,19 @@
+@mixin font-face($font-name, $file-name, $weight: 400, $style: normal) {
+  @font-face {
+    font-family: $font-name;
+    src: local($font-name),
+         url($file-name + ".woff2") format("woff2"),
+         url($file-name + ".woff") format("woff");
+    font-weight: $weight;
+    font-style: $style;
+    font-display: swap;
+  }
+}
+
+@mixin reset-margin {
+  margin: 0 auto;
+}
+
+@mixin set-width($child-width, $parent-width) {
+  width: $child-width * 100% / $parent-width;
+}
