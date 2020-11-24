@@ -1,0 +1,25 @@
+.nav {
+  &__list {
+    @include reset-list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 10px;
+  }
+
+  &__item {
+    margin-right: 40px;
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .active-nav-item {
+    a {
+      cursor: auto;
+    }
+  }
+}
