@@ -93,6 +93,47 @@
     color: rgba($c-black, 0.7);
   }
 
+  &__status-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid $c-black;
+
+    span {
+      padding-right: 20px;
+    }
+  }
+
+  &__button-approve,
+  &__button-reject {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    transition: opacity 0.3s;
+    cursor: pointer;
+
+    // hover
+    &:hover,
+    &:focus {
+      opacity: 0.7;
+    }
+
+    // active
+    &:active {
+      opacity: 0.5;
+    }
+  }
+
+  &__button-approve {
+    margin-right: 10px;
+  }
+
   &__form-wrapper {
     padding: 20px;
     background-color: $c-lightgray;
@@ -172,4 +213,8 @@
       box-shadow: 0 0 5px 0 rgba($c-anzac, 0.5);
     }
   }
+}
+
+.pending-news {
+  background-color: rgba($c-lightgray, 0.5);
 }

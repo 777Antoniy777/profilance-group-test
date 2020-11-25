@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {getUsername} from "../../selectors/user/selectors";
 
@@ -10,6 +11,10 @@ const Main = ({username}) => {
       </div>
     </section>
   );
+};
+
+Main.propTypes = {
+  username: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

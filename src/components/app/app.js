@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {BrowserRouter, Switch, Route} from "react-router-dom";
 import {AppRoute} from "../../js/enums";
@@ -44,13 +45,13 @@ const App = ({popupStatus}) => {
   );
 };
 
+App.propTypes = {
+  popupStatus: PropTypes.string,
+};
+
 const mapStateToProps = (state) => ({
   popupStatus: getPopupStatus(state),
 });
-
-// const mapDispatchToProps = (dispatch) => ({
-
-// });
 
 export default connect(
   mapStateToProps,

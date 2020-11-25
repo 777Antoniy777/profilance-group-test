@@ -1,5 +1,5 @@
 import {NewsActionType} from "../../actions/news/action-creator";
-import {deleteItem, addItem} from "../../actions/action-helpers";
+import {updateItem, deleteItem, addItem} from "../../actions/action-helpers";
 
 const initialState = {
   news: [
@@ -32,6 +32,12 @@ export default function createState(state = initialState, action) {
       return {
         ...state,
         news: deleteItem(state.news, action.payload),
+      };
+
+    case NewsActionType.APPROVE_NEWS:
+      return {
+        ...state,
+        news: updateItem(state.news, action.payload),
       };
 
     default:

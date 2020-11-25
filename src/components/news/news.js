@@ -1,9 +1,11 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
+import {AuthorizationStatus} from "../../js/enums";
+import {getUsername, getAuthorizationStatus} from "../../selectors/user/selectors";
 import {getNews} from "../../selectors/news/selectors";
 import {NewsActionCreator} from "../../actions/news/action-creator";
 import NewsItems from "../news-items/news-items";
-
 class News extends React.PureComponent {
   state = {
     search: {
@@ -17,7 +19,6 @@ class News extends React.PureComponent {
       value: '',
       message: '',
     },
-    filteredNews: this.props.news,
   }
 
   handleFormSubmit = (evt) => {
@@ -25,28 +26,15 @@ class News extends React.PureComponent {
   }
 
   handleInputChange = (evt) => {
-    const {news} = this.props;
     const target = evt.target;
     const name = target.name;
     const value = target.value.trim();
-    let filteredNews;
-
-    if (name === 'search') {
-      const searchValue = value.toLowerCase();
-
-      filteredNews = news.filter(elem => {
-        const {title} = elem;
-
-        return title.toLowerCase().includes(searchValue);
-      });
-    }
 
     if (name === 'search') {
       this.setState({
         [name]: {
           value,
         },
-        filteredNews,
       });
     } else {
       this.setState({
@@ -98,14 +86,19 @@ class News extends React.PureComponent {
     const newsParams = {};
 
     if (isValidate) {
+      const date = new Date();
       const newsObject = {
         item: newsParams,
         index: news.length,
       };
-      newsParams.id = news.length + 1;
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+
+      newsParams.id = news[news.length - 1].id + 1;
       newsParams.title = titleValue;
       newsParams.description = descriptionValue;
-      newsParams.date = Date.now();
+      newsParams.date = `${day}.${month}.${year}`;
       newsParams.status = 'pending';
 
       // dispatcher
@@ -124,11 +117,28 @@ class News extends React.PureComponent {
     }
   }
 
+  filterNews = () => {
+    const {news} = this.props;
+    const {search} = this.state;
+    let {value: searchValue} = search;
+
+    searchValue = searchValue.toLowerCase();
+    const filteredNews = news.filter(elem => {
+      const {title} = elem;
+
+      return title.toLowerCase().includes(searchValue);
+    });
+
+    return filteredNews;
+  }
+
   render() {
-    const {search, title, description, filteredNews} = this.state;
+    const {username, authorizationStatus, deleteNews, approveNews} = this.props;
+    const {search, title, description} = this.state;
     const {value: searchValue} = search;
     const {value: titleValue, message: titleMessage} = title;
     const {value: descriptionValue, message: descriptionMessage} = description;
+    const filteredNews = this.filterNews();
 
     return (
       <section className="news">
@@ -147,44 +157,77 @@ class News extends React.PureComponent {
           <NewsItems
             // properties
             news={filteredNews}
+            username={username}
+            authorizationStatus={authorizationStatus}
+            // handlers
+            deleteNews={deleteNews}
+            approveNews={approveNews}
           />
 
-          <div className="news__form-wrapper">
-            <form className="news__form" action="#" method="POST" onSubmit={this.handleFormSubmit}>
-              <div className="news__input-wrapper">
-                <label htmlFor="title">Название новости:</label>
-                <input id="title" type="text" value={titleValue} name="title" placeholder="Введите заголовок" onChange={this.handleInputChange} />
+          { authorizationStatus === AuthorizationStatus.AUTH &&
+            username !== 'Admin' &&
+            <div className="news__form-wrapper">
+              <form className="news__form" action="#" method="POST" onSubmit={this.handleFormSubmit}>
+                <div className="news__input-wrapper">
+                  <label htmlFor="title">Название новости:</label>
+                  <input id="title" type="text" value={titleValue} name="title" placeholder="Введите заголовок" onChange={this.handleInputChange} />
 
-                { titleMessage &&
-                  <p className="news__error-message">{titleMessage}</p>
-                }
-              </div>
+                  { titleMessage &&
+                    <p className="news__error-message">{titleMessage}</p>
+                  }
+                </div>
 
-              <div className="news__input-wrapper">
-                <label htmlFor="description">Описание новости:</label>
-                <textarea id="description" type="text" value={descriptionValue} name="description" placeholder="Введите описание" onChange={this.handleInputChange}></textarea>
+                <div className="news__input-wrapper">
+                  <label htmlFor="description">Описание новости:</label>
+                  <textarea id="description" type="text" value={descriptionValue} name="description" placeholder="Введите описание" onChange={this.handleInputChange}></textarea>
 
-                { descriptionMessage &&
-                  <p className="news__error-message">{descriptionMessage}</p>
-                }
-              </div>
+                  { descriptionMessage &&
+                    <p className="news__error-message">{descriptionMessage}</p>
+                  }
+                </div>
 
-              <button className="news__button" type="submit" onClick={this.handleButtonClick}>Отправить</button>
-            </form>
-          </div>
+                <button className="news__button" type="submit" onClick={this.handleButtonClick}>Отправить</button>
+              </form>
+            </div>
+          }
         </div>
       </section>
     );
   }
 }
 
+News.propTypes = {
+  username: PropTypes.string,
+  authorizationStatus: PropTypes.string,
+  news: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      status: PropTypes.string,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      date: PropTypes.string,
+    }),
+  ),
+  addNews: PropTypes.func,
+  deleteNews: PropTypes.func,
+  approveNews: PropTypes.func,
+};
+
 const mapStateToProps = (state) => ({
+  username: getUsername(state),
+  authorizationStatus: getAuthorizationStatus(state),
   news: getNews(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   addNews: (data) => {
     dispatch(NewsActionCreator.addNews(data));
+  },
+  deleteNews: (data) => {
+    dispatch(NewsActionCreator.deleteNews(data));
+  },
+  approveNews: (data) => {
+    dispatch(NewsActionCreator.approveNews(data));
   },
 });
 

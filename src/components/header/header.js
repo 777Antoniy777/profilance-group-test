@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 import {AppRoute, AuthorizationStatus} from "../../js/enums";
@@ -11,12 +12,14 @@ const Header = ({authorizationStatus, setUsername, setAuthorizationStatus, chang
     evt.preventDefault();
 
     if (authorizationStatus === AuthorizationStatus.AUTH) {
+      // dispatchers
       setUsername('Гость');
       setAuthorizationStatus(AuthorizationStatus.NO_AUTH);
 
       return false;
     }
 
+    // dispatcher
     changePopupStatus(true);
   };
 
@@ -25,7 +28,7 @@ const Header = ({authorizationStatus, setUsername, setAuthorizationStatus, chang
       <div className="site-wrapper">
         <nav className="header__nav nav">
           <ul className="nav__list">
-            <li className="nav__item active-nav-item">
+            <li className="nav__item">
               <Link to={AppRoute.MAIN}>Главная</Link>
             </li>
 
@@ -46,6 +49,13 @@ const Header = ({authorizationStatus, setUsername, setAuthorizationStatus, chang
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  authorizationStatus: PropTypes.string,
+  setUsername: PropTypes.func,
+  setAuthorizationStatus: PropTypes.func,
+  changePopupStatus: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

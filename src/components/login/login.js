@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import CloseIcon from '@material-ui/icons/Close';
 import {AuthorizationStatus} from "../../js/enums";
@@ -51,7 +52,7 @@ class Login extends React.PureComponent {
   }
 
   isLoginUser = (input, value, message, login) => {
-    const {users, password} = this.props;
+    const {users} = this.props;
     let isExist = false;
 
     users.forEach(elem => {
@@ -121,6 +122,7 @@ class Login extends React.PureComponent {
     const isValidate = this.validateInputs();
 
     if (isValidate) {
+      // dispatchers
       changePopupStatus(false);
       setUsername(nameValue);
       setAuthorizationStatus(AuthorizationStatus.AUTH);
@@ -146,6 +148,7 @@ class Login extends React.PureComponent {
     const isButtonClose = target.closest('.login__button-close');
 
     if (isOverlay || isButtonClose) {
+      // dispatcher
       changePopupStatus(false);
 
       this.setState({
@@ -206,6 +209,19 @@ class Login extends React.PureComponent {
     );
   }
 }
+
+Login.propTypes = {
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      password: PropTypes.string,
+    }),
+  ),
+  changePopupStatus: PropTypes.func,
+  setUsername: PropTypes.func,
+  setAuthorizationStatus: PropTypes.func,
+};
 
 const mapStateToProps = (state) => ({
   users: getUsers(state),

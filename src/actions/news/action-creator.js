@@ -14,6 +14,11 @@ const NewsActionCreator = {
     type: NewsActionType.DELETE_NEWS,
     payload: data,
   }),
+
+  approveNews: (data) => ({
+    type: NewsActionType.APPROVE_NEWS,
+    payload: data,
+  }),
 };
 
 export {NewsActionType, NewsActionCreator};
