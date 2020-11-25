@@ -1,19 +1,13 @@
 import React from "react";
-import Header from "../header/header";
-import Intro from "../intro/intro";
 
-const Main = () => {
+const Intro = () => {
   return (
-    <React.Fragment>
-      {/* Header component */}
-      <Header />
-
-      <main className="main">
-        {/* Intro component */}
-        <Intro />
-      </main>
-    </React.Fragment>
+    <section className="intro">
+      <div className="site-wrapper">
+        <h1 className="intro__title">Привет, Гость!</h1>
+      </div>
+    </section>
   );
 };
 
-export default Main;
+export default Intro;

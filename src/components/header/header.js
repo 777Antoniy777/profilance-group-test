@@ -1,6 +1,14 @@
 import React from "react";
+import {connect} from "react-redux";
+import {PopupActionCreator} from "../../actions/popup/action-creator";
 
-const Header = () => {
+const Header = ({changePopupStatus}) => {
+  const handlePopupOpen = (evt) => {
+    evt.preventDefault();
+
+    changePopupStatus(true);
+  };
+
   return (
     <header className="header">
       <div className="site-wrapper">
@@ -15,7 +23,7 @@ const Header = () => {
             </li>
 
             <li className="nav__item">
-              <a href="#">Вход</a>
+              <a href="#" onClick={handlePopupOpen}>Вход</a>
             </li>
           </ul>
         </nav>
@@ -24,4 +32,17 @@ const Header = () => {
   );
 };
 
-export default Header;
+// const mapStateToProps = (state) => ({
+
+// });
+
+const mapDispatchToProps = (dispatch) => ({
+  changePopupStatus: (status) => {
+    dispatch(PopupActionCreator.changePopupStatus(status));
+  },
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Header);
