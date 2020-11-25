@@ -1,7 +1,9 @@
 import React from "react";
 import {connect} from "react-redux";
 import CloseIcon from '@material-ui/icons/Close';
-import {getPopupStatus} from "../../selectors/popup/selectors";
+import {AuthorizationStatus} from "../../js/enums";
+import {getUsers} from "../../selectors/users/selectors";
+import {UserActionCreator} from "../../actions/user/action-creator";
 import {PopupActionCreator} from "../../actions/popup/action-creator";
 
 class Login extends React.PureComponent {
@@ -33,13 +35,107 @@ class Login extends React.PureComponent {
     });
   }
 
-  handleButtonClick = (evt) => {
+  isInputEmpty = (input, value, message) => {
+    if (!value.length) {
+      this.setState({
+        [input]: {
+          value,
+          message,
+        },
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  isLoginUser = (input, value, message, login) => {
+    const {users, password} = this.props;
+    let isExist = false;
+
+    users.forEach(elem => {
+      const {name, password} = elem;
+
+      if (input === 'name') {
+        if (name === value) {
+          isExist = true;
+        }
+      }
+
+      if (input === 'password') {
+        if (name === login && password === value) {
+          isExist = true;
+        }
+      }
+    });
+
+    if (!isExist) {
+      this.setState({
+        [input]: {
+          value,
+          message,
+        },
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  validateInputs = () => {
     const {name, password} = this.state;
     const {value: nameValue} = name;
     const {value: passwordValue} = password;
+
+    const isNameInputEmpty = this.isInputEmpty('name', nameValue, 'Поле не должно быть пустым');
+    const isPasswordInputEmpty = this.isInputEmpty('password', passwordValue, 'Поле не должно быть пустым');
+    let isExistName;
+    let isExistPassword;
+
+    if (!isNameInputEmpty || !isPasswordInputEmpty) {
+      return false;
+    }
+
+    isExistName = this.isLoginUser('name', nameValue, 'Такого логина не существует. Пожалуйста, зарегистрируйтесь');
+
+    if (!isExistName) {
+      return false;
+    }
+
+    isExistPassword = this.isLoginUser('password', passwordValue, 'Неверный пароль', nameValue)
+
+    if (!isExistPassword) {
+      return false;
+    }
+
+    return true;
+  }
+
+  handleButtonClick = (evt) => {
     evt.preventDefault();
+    const {changePopupStatus, setUsername, setAuthorizationStatus} = this.props;
+    const {name} = this.state;
+    const {value: nameValue} = name;
+    const isValidate = this.validateInputs();
 
+    if (isValidate) {
+      changePopupStatus(false);
+      setUsername(nameValue);
+      setAuthorizationStatus(AuthorizationStatus.AUTH);
 
+      this.setState({
+        name: {
+          value: '',
+          message: '',
+        },
+        password: {
+          value: '',
+          message: '',
+        },
+      });
+    }
   }
 
   handlePopupClose = (evt) => {
@@ -51,6 +147,17 @@ class Login extends React.PureComponent {
 
     if (isOverlay || isButtonClose) {
       changePopupStatus(false);
+
+      this.setState({
+        name: {
+          value: '',
+          message: '',
+        },
+        password: {
+          value: '',
+          message: '',
+        },
+      });
     }
   }
 
@@ -101,10 +208,16 @@ class Login extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  popupStatus: getPopupStatus(state),
+  users: getUsers(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  setUsername: (data) => {
+    dispatch(UserActionCreator.setUsername(data));
+  },
+  setAuthorizationStatus: (status) => {
+    dispatch(UserActionCreator.setAuthorizationStatus(status));
+  },
   changePopupStatus: (status) => {
     dispatch(PopupActionCreator.changePopupStatus(status));
   },

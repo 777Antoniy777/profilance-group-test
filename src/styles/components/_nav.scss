@@ -15,11 +15,26 @@
     &:last-child {
       margin-right: 0;
     }
-  }
 
-  .active-nav-item {
     a {
-      cursor: auto;
+      transition: opacity 0.3s;
+
+      // hover
+      &:hover,
+      &:focus {
+        opacity: 0.7;
+      }
+
+      // active
+      &:active {
+        opacity: 0.5;
+      }
     }
   }
+
+  // .active-nav-item {
+  //   a {
+  //     cursor: auto;
+  //   }
+  // }
 }

@@ -1,5 +1,11 @@
-const RequestMessage = {
-  ERROR_MESSAGE: 'Something error. Repeat later',
+const AppRoute = {
+  MAIN: `/`,
+  NEWS: `/news`,
 };
 
-export {RequestMessage};
+const AuthorizationStatus = {
+  NO_AUTH: `NO_AUTH`,
+  AUTH: `AUTH`,
+};
+
+export {AppRoute, AuthorizationStatus};

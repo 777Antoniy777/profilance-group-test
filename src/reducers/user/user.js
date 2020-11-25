@@ -1,7 +1,9 @@
+import {AuthorizationStatus} from "../../js/enums";
 import {UserActionType} from "../../actions/user/action-creator";
 
 const initialState = {
-  username: '',
+  username: 'Гость',
+  authorizationStatus: AuthorizationStatus.NO_AUTH,
 };
 
 export default function createState(state = initialState, action) {
@@ -10,6 +12,12 @@ export default function createState(state = initialState, action) {
       return {
         ...state,
         username: action.payload,
+      };
+
+    case UserActionType.SET_AUTHORIZATION_STATUS:
+      return {
+        ...state,
+        authorizationStatus: action.payload,
       };
 
     default:

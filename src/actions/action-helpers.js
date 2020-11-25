@@ -11,7 +11,7 @@ const deleteItem = (array, payload) => {
 };
 
 const addItem = (array, payload) => {
-  return [...array.slice(0, payload.index), payload];
+  return [...array.slice(0, payload.index), payload.item];
 }
 
 export {updateItem, deleteItem, addItem};
